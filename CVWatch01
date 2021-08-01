@@ -1,0 +1,62 @@
+#!/usr/bin/python3
+
+import cv2
+import numpy as np
+import datetime as tm
+
+# 時計のサイズ
+FRMX=200
+FRMY=200
+
+# Backgroud Color
+BGCOL=(64, 32, 32)
+# 円の色
+COLRD=(0, 255, 128)
+# 長針(秒)
+COLSEC=(128, 255, 255)
+# 分針
+COLMIN=(128, 128, 255)
+# 短針(時)
+COLHUR=(128, 128, 255)
+#
+winn="Watch"
+#
+img=np.array(0)
+
+
+def DispWatch(x, y):
+    global img
+    img = np.zeros((FRMY,FRMX,3), np.uint8)
+    img[:,:,0],img[:,:,1],img[:,:,2]=BGCOL
+    img = cv2.ellipse(img,((x,y),(int(x * 180/100),int(y * 180/100)),0),COLRD,3)
+    for i in range(12):
+        xx = int(x * 85 / 100 * np.cos(np.pi * (i / 6 - 1 / 2)) + x)
+        yy = int(y * 85 / 100 * np.sin(np.pi * (i / 6 - 1 / 2)) + y)
+        img = cv2.circle(img, (xx, yy), 2, COLRD, -1)
+    dt=tm.datetime.now()
+    ss=dt.second
+    ssx = int(x * 75 / 100 * np.cos(np.pi * (ss / 30 - 1 / 2)) + x)
+    ssy = int(y * 75 / 100 * np.sin(np.pi * (ss / 30 - 1 / 2)) + y)
+    mm=dt.minute * 60 + dt.second
+    mmx = int(x * 65 / 100 * np.cos(np.pi * (mm / 1800 - 1 / 2)) + x)
+    mmy = int(y * 65 / 100 * np.sin(np.pi * (mm / 1800 - 1 / 2)) + y)
+    hh= 3600 * dt.hour + mm
+    hhx = int(x * 50 / 100 * np.cos(np.pi * (hh / (12*1800) - 1 / 2)) + x)
+    hhy = int(y * 50 / 100 * np.sin(np.pi * (hh / (12*1800) - 1 / 2)) + y)
+    img = cv2.line(img,(x,y),(mmx,mmy),COLMIN,6)
+    img = cv2.line(img,(x,y),(hhx,hhy),COLHUR,7)
+    img = cv2.line(img,(x,y),(ssx,ssy),COLSEC,3)
+    return (x,y)
+
+loopf=True
+sx,sy=(int(FRMX/2),int(FRMY/2))
+while(loopf):
+    sx, sy = DispWatch(sx,sy)
+    cv2.imshow(winn,img)
+    if cv2.waitKey(200) == 27:
+        loopf=False
+    else:
+        loopf=True
+
+cv2.destroyWindow(winn)
+
