@@ -32,7 +32,8 @@ def DispWatch(x, y):
     #img = np.zeros((FRMY,FRMX,3), np.uint8)
     #img[:,:,0],img[:,:,1],img[:,:,2]=BGCOL
     imn %= MAXI
-    img = cv2.imread(imgfiles[imn])
+    rimg = cv2.imread(imgfiles[imn])
+    img = cv2.resize(rimg,(FRMX,FRMY))
     imn += 1
     #
     img = cv2.ellipse(img,((x,y),(int(x * 180/100),int(y * 180/100)),0),COLRD,3)
