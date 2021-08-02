@@ -1,1 +1,1 @@
-# image Watch with OpenCV
+# Image Watch with OpenCV
